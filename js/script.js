@@ -60,7 +60,7 @@ const posts = [
             "image": "https://unsplash.it/300/300?image=20"
         },
         "likes": 78,
-        "created": "2021-05-15"
+        "created": "2022-05-15" //li ho modificati per non ottenere solo date maggiori di un anno
     },
     {
         "id": 4,
@@ -68,7 +68,7 @@ const posts = [
         "media": "https://unsplash.it/600/400?image=24",
         "author": {
             "name": "Luca Formicola",
-            "image": null
+            "image": ''
         },
         "likes": 56,
         "created": "2021-04-03"
@@ -82,7 +82,7 @@ const posts = [
             "image": "https://unsplash.it/300/300?image=29"
         },
         "likes": 95,
-        "created": "2021-03-05"
+        "created": "2022-03-05" //li ho modificati per non ottenere solo date maggiori di un anno
     }
 ];
 
@@ -97,43 +97,86 @@ function myElemCreation(htmlcont, classToAdd){
     element.className = `${classToAdd}`;
     return element
 };
-function postGenerator(){
+
+const likedPost = [];
+function postGenerator(txtcontent, media, name, propic, likes, date, id){
+    function like(){
+        let newlikes = likes;
+        postLikesBtn.classList.toggle('like-button--liked');
+        likedPost.push(id);
+        const toRemove = document.getElementById('like-counter-1');
+        postLikesCounterText.remove(toRemove);
+        newlikes += 1;
+        postLikesCounterText.innerHTML = `Piace a <b id="like-counter-2" class="js-likes-counter">${newlikes}</b> persone`;
+        postLikesCounter.append(postLikesCounterText);
+        console.log(likedPost);
+        postLikesCTA.removeEventListener('click', like);
+
+        postLikesCTA.addEventListener('click', dislike);
+    };
+    function dislike(){
+        const toRemove = document.getElementById('like-counter-2');
+        postLikesCounterText.remove(toRemove);
+        postLikesCounterText.innerHTML = `Piace a <b id="like-counter-1" class="js-likes-counter">${likes}</b> persone`;
+        postLikesCounter.append(postLikesCounterText);
+
+        postLikesCTA.addEventListener('click', like);
+
+        if (likedPost.includes(id)){
+            for (let [i,elem] of likedPost.entries()){
+                if (elem == id){
+                    likedPost.splice(i, 1);
+                }
+            }
+        }
+        console.log(likedPost)
+    };
+    
     const divPost = myElemCreation('div', 'post');
     const postHeader = myElemCreation('div','post__header');
     const postMeta = myElemCreation('div', 'post-meta');
     const postProPicCont = myElemCreation('div', 'post-meta__icon');
     const postProPic = myElemCreation('img', 'profile-pic');
-    postProPic.src = '';
-    postProPicCont.append(postProPic)
+    postProPic.src = `${propic}`;
+    postProPicCont.append(postProPic);
     postMeta.append(postProPicCont);
 
     const postUserDateCont = myElemCreation('div', 'post-meta__data');
     const postUser = myElemCreation('div', 'post-meta__author');
+    postUser.innerText = `${name}`;
     const postDate = myElemCreation('div', 'post-meta__time');
+    postDate.innerText = `${date}`;
     postUserDateCont.append(postUser);
     postUserDateCont.append(postDate);
     postMeta.append(postUserDateCont);
     postHeader.append(postMeta);
 
     const postText = myElemCreation('div', 'post__text');
+    postText.innerText = `${txtcontent}`;
     const postImgCont = myElemCreation('div', 'post__image');
     const postImg = myElemCreation('img', '');
+    postImg.src = `${media}`;
     postImgCont.append(postImg);
 
     const postFooter = myElemCreation('div', 'post__footer');
     const postLikes = myElemCreation('div', 'likes js-likes');
     const postLikesCTA = myElemCreation('div', 'likes__cta');
+    
+    postLikesCTA.addEventListener('click', like);
+    
+
     const postLikesBtn = myElemCreation('a', 'like-button  js-like-button');
     const postLikesIcon = myElemCreation('i', 'like-button__icon fas fa-thumbs-up');
     const postLikesText = myElemCreation('span', 'like-button__label');
+    postLikesText.innerText =` Mi Piace`;
     postLikesBtn.append(postLikesIcon);
     postLikesBtn.append(postLikesText);
     postLikesCTA.append(postLikesBtn);
 
     const postLikesCounter = myElemCreation('div', 'likes__counter');
-    const postLikesCounterText = myElemCreation('b','js-likes-counter');
-    postLikesCounterText.setAttribute('id', 'like-counter-1');
-    postLikesCounter.append(`Piace a ${postLikesCounterText} persone`);
+    const postLikesCounterText = myElemCreation('p','js-likes-counter');
+    postLikesCounterText.innerHTML = `Piace a <b id="like-counter-1" class="js-likes-counter">${likes}</b> persone`;
+    postLikesCounter.append(postLikesCounterText);
 
     postLikes.append(postLikesCTA);
     postLikes.append(postLikesCounter);
@@ -147,11 +190,20 @@ function postGenerator(){
 }
 const page = document.getElementById('container');
 
-posts.forEach((value,)=>{
-    let post = postGenerator()
-    console.log(value);
-    console.log(post);
+posts.forEach((value)=>{
+
+    const date = new Date();
+    let creationTime;
+    const created = value.created.split('-');
+    if ((date.getFullYear() - created[0] >= 1)){
+        creationTime = `${date.getFullYear() - created[0]} anno fa`;
+    } else if ((date.getMonth() - created[1] < 12) && (date.getMonth() - created[1] > 1)){
+        creationTime = `${date.getMonth() - created[1]} mesi fa`;
+    } else {
+        creationTime = `${date.getDay() - created[2]} giorni fa `;
+    }
+    
+    let post = postGenerator(value.content,value.media, value.author.name, value.author.image, value.likes, creationTime, value.id);
     post.dataset.id = `${value.id}`;
     page.append(post);
 });
-let postSelect = document.querySelectorAll('[data-id]')
