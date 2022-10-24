@@ -102,7 +102,7 @@ const likedPost = [];
 function postGenerator(txtcontent, media, name, propic, likes, date, id){
     function like(){
         let newlikes = likes;
-        postLikesBtn.classList.toggle('like-button--liked');
+        postLikesBtn.classList.add('like-button--liked');
         likedPost.push(id);
         const toRemove = document.getElementById('like-counter-1');
         postLikesCounterText.remove(toRemove);
@@ -111,10 +111,10 @@ function postGenerator(txtcontent, media, name, propic, likes, date, id){
         postLikesCounter.append(postLikesCounterText);
         console.log(likedPost);
         postLikesCTA.removeEventListener('click', like);
-
         postLikesCTA.addEventListener('click', dislike);
     };
     function dislike(){
+        postLikesBtn.classList.remove('like-button--liked');
         const toRemove = document.getElementById('like-counter-2');
         postLikesCounterText.remove(toRemove);
         postLikesCounterText.innerHTML = `Piace a <b id="like-counter-1" class="js-likes-counter">${likes}</b> persone`;
