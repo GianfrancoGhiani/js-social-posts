@@ -1,4 +1,4 @@
-'use strict'
+
 /*
 Milestone 1 - Creiamo il nostro array di oggetti che rappresentano ciascun post.
 Ogni post dovrà avere le informazioni necessarie per stampare la relativa card:
@@ -92,6 +92,66 @@ creo una funzione che associ ad ogni chiave dell'oggetto post il contenitore nel
 creo array per ogni tipo di contenitore e dentro ci assegno i valori ciclando i due array html-oggetto assieme
 assegno id al post con dataset
 */
+function myElemCreation(htmlcont, classToAdd){
+    const element = document.createElement(`${htmlcont}`);
+    element.className = `${classToAdd}`;
+    return element
+};
 function postGenerator(){
-    const divPost = document.createElement('div');
+    const divPost = myElemCreation('div', 'post');
+    const postHeader = myElemCreation('div','post__header');
+    const postMeta = myElemCreation('div', 'post-meta');
+    const postProPicCont = myElemCreation('div', 'post-meta__icon');
+    const postProPic = myElemCreation('img', 'profile-pic');
+    postProPic.src = '';
+    postProPicCont.append(postProPic)
+    postMeta.append(postProPicCont);
+
+    const postUserDateCont = myElemCreation('div', 'post-meta__data');
+    const postUser = myElemCreation('div', 'post-meta__author');
+    const postDate = myElemCreation('div', 'post-meta__time');
+    postUserDateCont.append(postUser);
+    postUserDateCont.append(postDate);
+    postMeta.append(postUserDateCont);
+    postHeader.append(postMeta);
+
+    const postText = myElemCreation('div', 'post__text');
+    const postImgCont = myElemCreation('div', 'post__image');
+    const postImg = myElemCreation('img', '');
+    postImgCont.append(postImg);
+
+    const postFooter = myElemCreation('div', 'post__footer');
+    const postLikes = myElemCreation('div', 'likes js-likes');
+    const postLikesCTA = myElemCreation('div', 'likes__cta');
+    const postLikesBtn = myElemCreation('a', 'like-button  js-like-button');
+    const postLikesIcon = myElemCreation('i', 'like-button__icon fas fa-thumbs-up');
+    const postLikesText = myElemCreation('span', 'like-button__label');
+    postLikesBtn.append(postLikesIcon);
+    postLikesBtn.append(postLikesText);
+    postLikesCTA.append(postLikesBtn);
+
+    const postLikesCounter = myElemCreation('div', 'likes__counter');
+    const postLikesCounterText = myElemCreation('b','js-likes-counter');
+    postLikesCounterText.setAttribute('id', 'like-counter-1');
+    postLikesCounter.append(`Piace a ${postLikesCounterText} persone`);
+
+    postLikes.append(postLikesCTA);
+    postLikes.append(postLikesCounter);
+    postFooter.append(postLikes);
+
+    divPost.append(postHeader);
+    divPost.append(postText);
+    divPost.append(postImgCont);
+    divPost.append(postFooter);
+    return divPost
 }
+const page = document.getElementById('container');
+
+posts.forEach((value,)=>{
+    let post = postGenerator()
+    console.log(value);
+    console.log(post);
+    post.dataset.id = `${value.id}`;
+    page.append(post);
+});
+let postSelect = document.querySelectorAll('[data-id]')
